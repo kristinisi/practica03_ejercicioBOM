@@ -348,3 +348,16 @@ main {
 .breadcrumb {
   margin-left: 8%;
 }
+
+#btn {
+  margin-bottom: 50px;
+  color: white;
+  background-color: #1b1557;
+  height: 30px;
+  border-radius: 5px;
+}
+
+#aux {
+  background-image: url("../img/marmol2.jpg");
+  background-size: cover;
+}

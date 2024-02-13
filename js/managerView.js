@@ -464,7 +464,7 @@ class ManagerView {
         let newWindow = window.open(
           "plato.html",
           windowName,
-          "width=800, height=600, top=250, left=250, titlebar=yes, toolbar=no, menubar=no, location=no"
+          "width=800, height=346, top=250, left=250, titlebar=yes, toolbar=no, menubar=no, location=no"
         );
 
         // Verificar si se pudo abrir la ventana
