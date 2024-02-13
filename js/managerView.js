@@ -5,6 +5,7 @@ class ManagerView {
     this.main = document.getElementById("main");
     this.categories = document.getElementById("categories");
     this.menu = document.querySelector(".barra__style");
+    this.dishWindow = null;
   }
 
   [EXCECUTE_HANDLER](
@@ -23,6 +24,7 @@ class ManagerView {
   }
 
   //Creamos el bind para los enlaces de inicio
+
   bindInit(handler) {
     document.getElementById("init").addEventListener("click", (event) => {
       this[EXCECUTE_HANDLER](
@@ -215,9 +217,7 @@ class ManagerView {
   //Dos métodos que enlazan el manejador con los elementos de la pagina categoria
   bindDishesCategoryList(handler) {
     const categoryList = document.getElementById("categories");
-    console.log(categoryList);
     const links = categoryList.querySelectorAll("a");
-    console.log(links);
     for (const link of links) {
       link.addEventListener("click", (event) => {
         const { category } = event.currentTarget.dataset;
@@ -289,6 +289,113 @@ class ManagerView {
     }
   }
 
+  showDish(dish) {
+    const nav = document.querySelector(".breadcrumb");
+    nav.id = "migas_plato";
+    const ultimoLi = nav.querySelector(".active");
+    ultimoLi.classList.remove("active");
+    const li = document.createElement("li");
+    li.classList.add("breadcrumb-item", "active");
+    li.textContent = "Plato";
+    nav.insertAdjacentElement("beforeend", li);
+
+    this.categories.replaceChildren();
+    this.main.replaceChildren();
+
+    const container = document.createElement("div");
+    container.classList.add("container");
+
+    if (dish) {
+      container.id = "single-dish";
+      const ingredientsList = dish.ingredients.join(", ");
+      container.insertAdjacentHTML(
+        "beforeend",
+        `
+        <div class="card mb-3" style="max-width: 540px;">
+          <div class="row g-0">
+            <div class="col-md-4">
+              <img src="${dish.image}" class="img-fluid rounded-start">
+            </div>  
+            <div class="col-md-8">
+              <div class="card-body">
+                <h5 class="card-title">${dish.name}</h5>
+                <p class="card-text">${dish.description}</p>
+                <p class="card-text"><small class="text-body-secondary">${ingredientsList}</small></p>
+              </div>
+            </div>
+          </div>
+        </div>
+        `
+      );
+    }
+    const bDish = document.createElement("button");
+    bDish.id = "btn";
+    bDish.dataset.name = dish.name;
+    bDish.innerHTML = "Abrir plato en una nueva ventana";
+
+    this.main.append(nav);
+    this.main.append(container);
+    this.main.append(bDish);
+  }
+
+  bindDishClick(handler) {
+    const dishlist = document.getElementById("dishes-list");
+    const links = dishlist.querySelectorAll("a.imagen");
+
+    for (const link of links) {
+      link.addEventListener("click", (event) => {
+        const { name } = event.currentTarget.dataset;
+        this[EXCECUTE_HANDLER](
+          handler,
+          [name],
+          "#single-dish",
+          { action: "dish", name },
+          "#single-dish",
+          event
+        );
+      });
+    }
+  }
+
+  showRestaurant(restaurant, name) {
+    this.categories.replaceChildren();
+    this.main.replaceChildren();
+
+    const nav = document.createElement("nav");
+    nav.id = "migas_restaurante";
+    nav.ariaLabel = "breadcrumbs";
+    nav.insertAdjacentHTML(
+      "beforeend",
+      `
+      <ol class="breadcrumb">
+       <li class="breadcrumb-item">Inicio</li>
+       <li class="breadcrumb-item">Restaurantes</li>
+       <li class="breadcrumb-item active">${name}</li>
+      </ol>
+      `
+    );
+
+    const container = document.createElement("div");
+    container.classList.add("container");
+    if (restaurant) {
+      container.id = "restaurant";
+      container.insertAdjacentHTML(
+        "beforeend",
+        `
+        <div class="card text-bg-dark">
+          <img src="${restaurant.restaurant.image}" class="card-img">
+          <div class="card-img-overlay">
+            <h5 class="card-title">${restaurant.restaurant.name}</h5>
+            <p class="card-text">${restaurant.restaurant.description}</p>
+          </div>
+        </div>
+        `
+      );
+    }
+    this.main.append(nav);
+    this.main.append(container);
+  }
+
   bindRestaurantListInMenu(handler) {
     const navMenu = document.getElementById("navRest");
     const links = navMenu.nextSibling.querySelectorAll("a");
@@ -309,135 +416,64 @@ class ManagerView {
     }
   }
 
-  showDish(dish) {
-    function lookDish(ingredientsList) {
-      return `
-        <div class="card mb-3" style="max-width: 540px;">
-          <div class="row g-0">
-            <div class="col-md-4">
-              <img src="${dish.image}" class="img-fluid rounded-start">
-            </div>  
-            <div class="col-md-8">
-              <div class="card-body">
-                <h5 class="card-title">${dish.name}</h5>
-                <p class="card-text">${dish.description}</p>
-                <p class="card-text"><small class="text-body-secondary">${ingredientsList}</small></p>
-              </div>
-            </div>
-          </div>
-        </div>
-        `;
-    }
-
-    this.categories.replaceChildren();
-    this.main.replaceChildren();
-
-    const nav = document.querySelector("breadcrumb");
-    console.log(nav);
-    // const ultimoLi = nav.lastElementChild();
-    // console.log(ultimoLi);
-    // const ultimo = document.createElement("li");
-    // ultimo.classList.add("breadcrumb-item", "active");
-    // nav.ariaLabel = "breadcrumbs";
-    // nav.insertAdjacentHTML(
-    //   "beforeend",
-    //   `
-
-    //   `
-    // );
-
-    const container = document.createElement("div");
-    container.classList.add("container");
-
+  showDishInNewWindow(dish) {
+    console.log(dish);
+    const main = this.dishWindow.document.querySelector("main");
+    console.log(main);
+    main.replaceChildren();
+    let container;
     if (dish) {
+      console.log(this.dishWindow);
+      this.dishWindow.document.title = `${dish.name}`;
+      container = this.dishWindow.document.createElement("div");
+      container.classList.add("container");
       container.id = "single-dish";
       const ingredientsList = dish.ingredients.join(", ");
-      container.insertAdjacentHTML("beforeend", lookDish(ingredientsList));
-    }
-    this.main.append(nav);
-    this.main.append(container);
-
-    function lookDish(ingredientsList) {
-      return `
-        <div class="card mb-3" style="max-width: 540px;">
-          <div class="row g-0">
-            <div class="col-md-4">
-              <img src="${dish.image}" class="img-fluid rounded-start">
-            </div>  
-            <div class="col-md-8">
-              <div class="card-body">
-                <h5 class="card-title">${dish.name}</h5>
-                <p class="card-text">${dish.description}</p>
-                <p class="card-text"><small class="text-body-secondary">${ingredientsList}</small></p>
-              </div>
-            </div>
-          </div>
-        </div>
-        `;
-    }
-  }
-
-  bindDishClick(handler) {
-    const dishlist = document.getElementById("dishes-list");
-    const links = dishlist.querySelectorAll("a.imagen");
-
-    for (const link of links) {
-      link.addEventListener("click", (event) => {
-        handler(event.currentTarget.dataset.name);
-
-        const { name } = event.currentTarget.dataset;
-        this[EXCECUTE_HANDLER](
-          handler,
-          [name],
-          "#single-dish",
-          { action: "dish", name },
-          "#single-dish",
-          event
-        );
-      });
-    }
-  }
-
-  showRestaurant(restaurant, name) {
-    this.categories.replaceChildren();
-    this.main.replaceChildren();
-
-    console.log("estoy aqui");
-
-    const nav = document.createElement("nav");
-    nav.id = "migas_restaurante";
-    nav.ariaLabel = "breadcrumbs";
-    nav.insertAdjacentHTML(
-      "beforeend",
-      `
-      <ol class="breadcrumb">
-       <li class="breadcrumb-item">Inicio</li>
-       <li class="breadcrumb-item">Restaurantes</li>
-       <li class="breadcrumb-item active">${name}</li>
-      </ol>
-      `
-    );
-
-    const container = document.createElement("div");
-    container.classList.add("container");
-    if (restaurant) {
-      console.log(restaurant.restaurant.description);
-      container.id = "restaurant";
       container.insertAdjacentHTML(
         "beforeend",
         `
-        <div class="card text-bg-dark">
-          <img src="${restaurant.restaurant.image}" class="card-img">
-          <div class="card-img-overlay">
-            <h5 class="card-title">${restaurant.restaurant.name}</h5>
-            <p class="card-text">${restaurant.restaurant.description}</p>
+      <div class="card mb-3" style="max-width: 540px;">
+        <div class="row g-0">
+          <div class="col-md-4">
+            <img src="${dish.image}" class="img-fluid rounded-start">
+          </div>  
+          <div class="col-md-8">
+            <div class="card-body">
+              <h5 class="card-title">${dish.name}</h5>
+              <p class="card-text">${dish.description}</p>
+              <p class="card-text"><small class="text-body-secondary">${ingredientsList}</small></p>
+            </div>
           </div>
         </div>
-        `
+      </div>
+      `
       );
     }
-    this.main.append(nav);
-    this.main.append(container);
+    main.append(container);
+  }
+
+  bindShowDishInNewWindow(handler) {
+    const bOpen = document.getElementById("btn");
+    bOpen.addEventListener("click", (event) => {
+      if (!this.dishWindow || this.dishWindow.closed) {
+        console.log("estoy aqui");
+
+        this.dishWindow = window.open(
+          "plato.html",
+          "DishWindow",
+          "width=800, height=600, top=250, left=250, titlebar=yes, toolbar=no, menubar=no, location=no"
+        );
+        // console.log(this.dishWindow);
+        // console.log(this.dishWindow.document);
+
+        this.dishWindow.addEventListener("DOMContentLoaded", () => {
+          handler(event.target.dataset.name);
+        });
+      } else {
+        handler(event.target.dataset.name);
+        this.dishWindow.focus();
+      }
+    });
   }
 }
 export default ManagerView;

@@ -322,7 +322,6 @@ class ManagerController {
 
   handleDishesCategoryList = (name) => {
     const category = this[MODEL].createCategory(name);
-    console.log(category);
     this[VIEW].listDishes(
       this[MODEL].getDishesInCategroy(category),
       category.name,
@@ -332,9 +331,7 @@ class ManagerController {
   };
 
   handleDishesAllergenList = (name) => {
-    console.log(name);
     const allergen = this[MODEL].createAllergen(name);
-    console.log(allergen);
     this[VIEW].listDishes(
       this[MODEL].getDishesWithAllergen(allergen),
       allergen.name,
@@ -344,7 +341,6 @@ class ManagerController {
   };
 
   handleDishesMenuList = (name) => {
-    console.log(name);
     const menu = this[MODEL].createMenu(name);
     this[VIEW].listDishes(
       this[MODEL].getDishesWithMenu(menu),
@@ -357,12 +353,17 @@ class ManagerController {
   handleDish = (name) => {
     const dish = this[MODEL].createDish(name);
     this[VIEW].showDish(dish);
+    this[VIEW].bindShowDishInNewWindow(this.handleShowDishInNewWindow);
   };
 
   handleRestaurant = (name) => {
     const rest = this[MODEL].createRestaurant(name);
-    console.log(rest);
     this[VIEW].showRestaurant(rest, name);
+  };
+
+  handleShowDishInNewWindow = (name) => {
+    const dish = this[MODEL].createDish(name);
+    this[VIEW].showDishInNewWindow(dish);
   };
 }
 export default ManagerController;
