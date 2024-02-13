@@ -238,17 +238,15 @@ class ManagerView {
     const links = navCats.nextSibling.querySelectorAll("a");
     for (const link of links) {
       link.addEventListener("click", (event) => {
-        link.addEventListener("click", (event) => {
-          const { category } = event.currentTarget.dataset;
-          this[EXCECUTE_HANDLER](
-            handler,
-            [category],
-            "#category-list",
-            { action: "dishesCategoryList", category },
-            "#category-list",
-            event
-          );
-        });
+        const { category } = event.currentTarget.dataset;
+        this[EXCECUTE_HANDLER](
+          handler,
+          [category],
+          "#category-list",
+          { action: "dishesCategoryList", category },
+          "#category-list",
+          event
+        );
       });
     }
   }
