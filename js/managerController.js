@@ -318,6 +318,8 @@ class ManagerController {
   onAddRestaurant = () => {
     this[VIEW].showRestaurantsInMenu(this[MODEL].restaurants);
     this[VIEW].bindRestaurantListInMenu(this.handleRestaurant);
+    this[VIEW].showCloseInMenu();
+    this[VIEW].bindCloseInMenu(this.handleClose);
   };
 
   handleDishesCategoryList = (name) => {
@@ -364,6 +366,14 @@ class ManagerController {
   handleShowDishInNewWindow = (name, pag) => {
     const dish = this[MODEL].createDish(name);
     this[VIEW].showDishInNewWindow(dish, pag);
+  };
+
+  handleClose = (pag) => {
+    console.log(pag);
+    pag.forEach((value) => {
+      value.close();
+    });
+    pag.clear();
   };
 }
 export default ManagerController;

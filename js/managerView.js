@@ -484,14 +484,20 @@ class ManagerView {
     });
   }
 
-  // showCloseInMenu() {
-  //   const li = document.createElement("li");
-  //   li.classList.add("nav-item", "dropdown");
-  //   li.insertAdjacentHTML(
-  //     "beforeend",
-  //     `<a class="nav-link dropdown-toggle" href="#" id="navClose" role="button"     data-bs-toggle="dropdown" aria-expanded="false">Restaurantes</a>`
-  //   );
-  //   this.menu.append(li);
-  // }
+  showCloseInMenu() {
+    const li = document.createElement("li");
+    li.insertAdjacentHTML(
+      "beforeend",
+      `<a class=" href="#" id="navClose" role="button">Cerrar ventanas</a>`
+    );
+    this.menu.append(li);
+  }
+
+  bindCloseInMenu(handler) {
+    const navClose = document.getElementById("navClose");
+    navClose.addEventListener("click", (event) => {
+      handler(this.dishWindow);
+    });
+  }
 }
 export default ManagerView;
