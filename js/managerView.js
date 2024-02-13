@@ -5,7 +5,8 @@ class ManagerView {
     this.main = document.getElementById("main");
     this.categories = document.getElementById("categories");
     this.menu = document.querySelector(".barra__style");
-    this.dishWindow = null;
+    this.dishWindow = new Map();
+    this.cont = 0;
   }
 
   [EXCECUTE_HANDLER](
@@ -414,16 +415,15 @@ class ManagerView {
     }
   }
 
-  showDishInNewWindow(dish) {
-    console.log(dish);
-    const main = this.dishWindow.document.querySelector("main");
+  showDishInNewWindow(dish, newWindow) {
+    const main = newWindow.document.querySelector("main");
     console.log(main);
     main.replaceChildren();
     let container;
     if (dish) {
-      console.log(this.dishWindow);
-      this.dishWindow.document.title = `${dish.name}`;
-      container = this.dishWindow.document.createElement("div");
+      console.log(newWindow);
+      newWindow.document.title = `${dish.name}`;
+      container = newWindow.document.createElement("div");
       container.classList.add("container");
       container.id = "single-dish";
       const ingredientsList = dish.ingredients.join(", ");
@@ -453,25 +453,45 @@ class ManagerView {
   bindShowDishInNewWindow(handler) {
     const bOpen = document.getElementById("btn");
     bOpen.addEventListener("click", (event) => {
-      if (!this.dishWindow || this.dishWindow.closed) {
-        console.log("estoy aqui");
+      const windowName = `DishWindow${this.cont}`;
 
-        this.dishWindow = window.open(
+      // Verificar si la página ya está abierta en una ventana
+      if (
+        !this.dishWindow.has(windowName) ||
+        this.dishWindow.get(windowName).closed
+      ) {
+        // Abrir la página en una nueva ventana
+        let newWindow = window.open(
           "plato.html",
-          "DishWindow",
+          windowName,
           "width=800, height=600, top=250, left=250, titlebar=yes, toolbar=no, menubar=no, location=no"
         );
-        // console.log(this.dishWindow);
-        // console.log(this.dishWindow.document);
 
-        this.dishWindow.addEventListener("DOMContentLoaded", () => {
-          handler(event.target.dataset.name);
+        // Verificar si se pudo abrir la ventana
+        if (newWindow) {
+          this.dishWindow.set(windowName, newWindow); // Agregar la ventana al mapa
+          this.cont++;
+          console.log(this.dishWindow);
+        }
+
+        // Agregar un listener para el evento DOMContentLoaded
+        console.log(newWindow);
+        newWindow.addEventListener("DOMContentLoaded", () => {
+          const dishName = event.target.dataset.name;
+          handler(dishName, newWindow);
         });
-      } else {
-        handler(event.target.dataset.name);
-        this.dishWindow.focus();
       }
     });
   }
+
+  // showCloseInMenu() {
+  //   const li = document.createElement("li");
+  //   li.classList.add("nav-item", "dropdown");
+  //   li.insertAdjacentHTML(
+  //     "beforeend",
+  //     `<a class="nav-link dropdown-toggle" href="#" id="navClose" role="button"     data-bs-toggle="dropdown" aria-expanded="false">Restaurantes</a>`
+  //   );
+  //   this.menu.append(li);
+  // }
 }
 export default ManagerView;

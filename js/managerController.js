@@ -361,9 +361,9 @@ class ManagerController {
     this[VIEW].showRestaurant(rest, name);
   };
 
-  handleShowDishInNewWindow = (name) => {
+  handleShowDishInNewWindow = (name, pag) => {
     const dish = this[MODEL].createDish(name);
-    this[VIEW].showDishInNewWindow(dish);
+    this[VIEW].showDishInNewWindow(dish, pag);
   };
 }
 export default ManagerController;
