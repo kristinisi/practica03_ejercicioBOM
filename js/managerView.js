@@ -1,3 +1,5 @@
+const EXCECUTE_HANDLER = Symbol("excecuteHandler");
+
 class ManagerView {
   constructor() {
     this.main = document.getElementById("main");
@@ -5,10 +7,32 @@ class ManagerView {
     this.menu = document.querySelector(".barra__style");
   }
 
+  [EXCECUTE_HANDLER](
+    handler,
+    handlerArguments,
+    scrollElement,
+    data,
+    url,
+    event
+  ) {
+    handler(...handlerArguments);
+    const scroll = document.querySelector(scrollElement);
+    if (scroll) scroll.scrollIntoView();
+    history.pushState(data, null, url);
+    event.preventDefault();
+  }
+
   //Creamos el bind para los enlaces de inicio
   bindInit(handler) {
     document.getElementById("init").addEventListener("click", (event) => {
-      handler();
+      this[EXCECUTE_HANDLER](
+        handler,
+        [],
+        "body",
+        { action: "init" },
+        "#",
+        event
+      );
     });
   }
 
@@ -196,7 +220,15 @@ class ManagerView {
     console.log(links);
     for (const link of links) {
       link.addEventListener("click", (event) => {
-        handler(event.currentTarget.dataset.category);
+        const { category } = event.currentTarget.dataset;
+        this[EXCECUTE_HANDLER](
+          handler,
+          [category],
+          "#category-list",
+          { action: "dishesCategoryList", category },
+          "#category-list",
+          event
+        );
       });
     }
   }
@@ -206,8 +238,17 @@ class ManagerView {
     const links = navCats.nextSibling.querySelectorAll("a");
     for (const link of links) {
       link.addEventListener("click", (event) => {
-        handler(event.currentTarget.dataset.category);
-        console.log(event.currentTarget.dataset.category);
+        link.addEventListener("click", (event) => {
+          const { category } = event.currentTarget.dataset;
+          this[EXCECUTE_HANDLER](
+            handler,
+            [category],
+            "#category-list",
+            { action: "dishesCategoryList", category },
+            "#category-list",
+            event
+          );
+        });
       });
     }
   }
@@ -217,7 +258,15 @@ class ManagerView {
     const links = navAller.nextSibling.querySelectorAll("a");
     for (const link of links) {
       link.addEventListener("click", (event) => {
-        handler(event.currentTarget.dataset.allergen);
+        const { allergen } = event.currentTarget.dataset;
+        this[EXCECUTE_HANDLER](
+          handler,
+          [allergen],
+          "#navAller",
+          { action: "dishesAllergenList", allergen },
+          "#",
+          event
+        );
       });
     }
   }
@@ -227,12 +276,59 @@ class ManagerView {
     const links = navMenu.nextSibling.querySelectorAll("a");
     for (const link of links) {
       link.addEventListener("click", (event) => {
-        handler(event.currentTarget.dataset.menu);
+        const { menu } = event.currentTarget.dataset;
+        this[EXCECUTE_HANDLER](
+          handler,
+          [menu],
+          "#navMenu",
+          { action: "dishesMenuList", menu },
+          "#",
+          event
+        );
+      });
+    }
+  }
+
+  bindRestaurantListInMenu(handler) {
+    const navMenu = document.getElementById("navRest");
+    const links = navMenu.nextSibling.querySelectorAll("a");
+    for (const link of links) {
+      link.addEventListener("click", (event) => {
+        handler(event.currentTarget.dataset.restaurant);
+
+        const { restaurant } = event.currentTarget.dataset;
+        this[EXCECUTE_HANDLER](
+          handler,
+          [restaurant],
+          "#restaurant",
+          { action: "restaurant", restaurant },
+          "#",
+          event
+        );
       });
     }
   }
 
   showDish(dish) {
+    function lookDish(ingredientsList) {
+      return `
+        <div class="card mb-3" style="max-width: 540px;">
+          <div class="row g-0">
+            <div class="col-md-4">
+              <img src="${dish.image}" class="img-fluid rounded-start">
+            </div>  
+            <div class="col-md-8">
+              <div class="card-body">
+                <h5 class="card-title">${dish.name}</h5>
+                <p class="card-text">${dish.description}</p>
+                <p class="card-text"><small class="text-body-secondary">${ingredientsList}</small></p>
+              </div>
+            </div>
+          </div>
+        </div>
+        `;
+    }
+
     this.categories.replaceChildren();
     this.main.replaceChildren();
 
@@ -256,9 +352,13 @@ class ManagerView {
     if (dish) {
       container.id = "single-dish";
       const ingredientsList = dish.ingredients.join(", ");
-      container.insertAdjacentHTML(
-        "beforeend",
-        `
+      container.insertAdjacentHTML("beforeend", lookDish(ingredientsList));
+    }
+    this.main.append(nav);
+    this.main.append(container);
+
+    function lookDish(ingredientsList) {
+      return `
         <div class="card mb-3" style="max-width: 540px;">
           <div class="row g-0">
             <div class="col-md-4">
@@ -273,11 +373,8 @@ class ManagerView {
             </div>
           </div>
         </div>
-        `
-      );
+        `;
     }
-    this.main.append(nav);
-    this.main.append(container);
   }
 
   bindDishClick(handler) {
@@ -287,6 +384,16 @@ class ManagerView {
     for (const link of links) {
       link.addEventListener("click", (event) => {
         handler(event.currentTarget.dataset.name);
+
+        const { name } = event.currentTarget.dataset;
+        this[EXCECUTE_HANDLER](
+          handler,
+          [name],
+          "#single-dish",
+          { action: "dish", name },
+          "#single-dish",
+          event
+        );
       });
     }
   }
@@ -331,16 +438,6 @@ class ManagerView {
     }
     this.main.append(nav);
     this.main.append(container);
-  }
-
-  bindRestaurantListInMenu(handler) {
-    const navMenu = document.getElementById("navRest");
-    const links = navMenu.nextSibling.querySelectorAll("a");
-    for (const link of links) {
-      link.addEventListener("click", (event) => {
-        handler(event.currentTarget.dataset.restaurant);
-      });
-    }
   }
 }
 export default ManagerView;
