@@ -374,6 +374,7 @@ class ManagerController {
       value.close();
     });
     pag.clear();
+    this[VIEW].cont = 0;
   };
 }
 export default ManagerController;

@@ -453,34 +453,29 @@ class ManagerView {
   bindShowDishInNewWindow(handler) {
     const bOpen = document.getElementById("btn");
     bOpen.addEventListener("click", (event) => {
-      const windowName = `DishWindow${this.cont}`;
+      let windowName = `DishWindow${this.cont}`;
+      let nameAux = `DishWindow${this.cont - 1}`;
 
-      // Verificar si la página ya está abierta en una ventana
-      if (
-        !this.dishWindow.has(windowName) ||
-        this.dishWindow.get(windowName).closed
-      ) {
-        // Abrir la página en una nueva ventana
-        let newWindow = window.open(
-          "plato.html",
-          windowName,
-          "width=800, height=346, top=250, left=250, titlebar=yes, toolbar=no, menubar=no, location=no"
-        );
+      // Abrir la página en una nueva ventana
+      let newWindow = window.open(
+        "plato.html",
+        windowName,
+        "width=800, height=346, top=250, left=350, titlebar=yes, toolbar=no, menubar=no, location=no"
+      );
 
-        // Verificar si se pudo abrir la ventana
-        if (newWindow) {
-          this.dishWindow.set(windowName, newWindow); // Agregar la ventana al mapa
-          this.cont++;
-          console.log(this.dishWindow);
-        }
-
-        // Agregar un listener para el evento DOMContentLoaded
-        console.log(newWindow);
-        newWindow.addEventListener("DOMContentLoaded", () => {
-          const dishName = event.target.dataset.name;
-          handler(dishName, newWindow);
-        });
+      // Verificar si se pudo abrir la ventana
+      if (newWindow) {
+        this.dishWindow.set(windowName, newWindow); // Agregar la ventana al mapa
+        this.cont++;
+        console.log(this.dishWindow);
       }
+
+      // Agregar un listener para el evento DOMContentLoaded
+      console.log(newWindow);
+      newWindow.addEventListener("DOMContentLoaded", () => {
+        const dishName = event.target.dataset.name;
+        handler(dishName, newWindow);
+      });
     });
   }
 
