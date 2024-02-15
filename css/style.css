@@ -72,57 +72,9 @@ body {
   text-align: center;
 }
 
-/* .plato--primero {
-  background-image: url("../img/plato01.png");
-  width: 280px;
-  height: 300px;
-  background-size: cover;
-} */
-
-/* .plato--segundo {
-  background-image: url("../img/plato02.png");
-  width: 280px;
-  height: 300px;
-  background-size: cover;
-} */
-
-/* .plato--tercero {
-  background-image: url("../img/plato03.png");
-  width: 280px;
-  height: 300px;
-  background-size: cover;
-} */
-
-/* .plato--cuarto {
-  background-image: url("../img/plato04.png");
-  width: 300px;
-  height: 300px;
-  background-size: cover;
-} */
-/* 
-.plato--quinto {
-  background-image: url("../img/plato05.png");
-  width: 280px;
-  height: 300px;
-  background-size: cover;
-} */
-
-/* .plato--sexto {
-  background-image: url("../img/plato06.png");
-  width: 290px;
-  height: 300px;
-  background-size: cover;
-} */
-
 hr {
   color: black;
 }
-
-/* .miniSeparador--horizontal {
-  width: 60%;
-  height: 2px;
-  background-color: #1b1557;
-} */
 
 .reserva {
   padding-top: 35px;
@@ -209,9 +161,10 @@ hr {
   list-style: none;
   display: flex;
   text-align: center;
+  justify-content: center;
   margin: auto;
-  margin-bottom: 50px;
-  margin-left: 13%;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 
 #categories div {
@@ -313,6 +266,7 @@ main {
   grid-template-columns: repeat(3, 30%);
   grid-template-rows: [uno] 50px [dos] 50px [tres] 380px [cuatro];
   justify-content: center;
+  background-image: url("../img/marmol2.jpg");
 }
 
 .miniSeparador {

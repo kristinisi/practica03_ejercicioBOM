@@ -454,13 +454,12 @@ class ManagerView {
     const bOpen = document.getElementById("btn");
     bOpen.addEventListener("click", (event) => {
       let windowName = `DishWindow${this.cont}`;
-      let nameAux = `DishWindow${this.cont - 1}`;
 
       // Abrir la página en una nueva ventana
       let newWindow = window.open(
         "plato.html",
         windowName,
-        "width=800, height=346, top=250, left=350, titlebar=yes, toolbar=no, menubar=no, location=no"
+        "width=800, height=330, top=250, left=350, titlebar=yes, toolbar=no, menubar=no, location=no"
       );
 
       // Verificar si se pudo abrir la ventana
